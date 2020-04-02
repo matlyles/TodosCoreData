@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UITableViewController {
     
     var itemArray = ["Buy Milk", "Go to the doctors", "work on latest dev project"]
+    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +20,10 @@ class ViewController: UITableViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAddGroup))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.rowHeight = 80
+        
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items
+        }
         
     }
     
@@ -30,6 +35,7 @@ class ViewController: UITableViewController {
                 let readyText = textFieldData.text else { return }
             print(readyText)
             self.itemArray.append(readyText)
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             self.tableView.reloadData()
         }
         let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
@@ -48,7 +54,7 @@ class ViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = itemArray[indexPath.row]
         cell.selectionStyle = .none
         cell.accessoryType = .none
